@@ -44,17 +44,59 @@ class User():
         #! 获取所有学科 end
 
     def save_head(self):
+        """保存头像"""
         pic = requests.get(self.user_head_img.replace(".jpg","_private.jpg"))
         with open(r"Temp\FacePrivate.jpg","wb+") as f:
             f.write(pic.content)
         print(self.user_name + '的头像已保存到Temp文件夹')
+
+    def get_undo_homework(self):
+        """获取未完成的作业"""
+        homework_api = 'https://www.anoah.com/api/?q=json/ebag5/Homework/readHomework&info={"user_id":"' + self.user_id + '","type":1,"page":1,"class_id":"' + self.user_class_ids + '"}'
+        homework_json = json.loads(requests.get(homework_api).text)['recordset']
+        # 发送get请求
+        return homework_json
+
+    def analysis_grade(self):
+        """等级评估(仅显示已批改)"""
+        return_list = []
+        for i in self.subject_json:
+            item = {}
+            grade_api = "http://e.anoah.com/api/?q=json/ebag5/Statistics/getStudentScoreInfo&info={\"user_id\":%s,\"class_id\":\"%s\",\"type\":0,\"subject_id\":%s,\"pagesize\":1,\"page\":1,\"start_date\":\"\",\"end_date\":\"\"}&pmatsemit=%s" % (self.user_id,self.user_class_ids,self.subject_json[i],self.server_time)
+            grade_json = json.loads(requests.get(grade_api).text)
+            if grade_json["recordset"]:
+                item['status'] = True
+                item['subject'] = i
+                # 科目名称
+                item['time'] = grade_json["recordset"][0]["publish_time"]
+                # 时间
+                item['title'] = grade_json["recordset"][0]["title"]
+                # 标题
+                item['result'] = round(grade_json["recordset"][0]["student_right_rate"]*100,2)
+                # 个人分数
+                item['classr'] = round(grade_json["recordset"][0]["class_right_rate"]*100,2)
+                # 班级平均
+                if item['result'] >= item['classr']:
+                    item['contrast'] = 'up'
+                    # 高于或等于班平
+                else:
+                    item['contrast'] = 'down'
+                    # 低于班平
+            else:
+                item['status'] = False
+                item['subject'] = i
+            return_list.append(item)
+        return return_list
+
 if __name__ == "__main__":
     #* tests *#
     user = User("1765841")
-    print(user.server_time)
-    print(user.user_name)
-    print(user.user_head_img)
-    print(user.uesr_point)
-    print(user.user_class_ids)
-    print(user.subject_json)
-    user.save_head()
+    # print(user.server_time)
+    # print(user.user_name)
+    # print(user.user_head_img)
+    # print(user.uesr_point)
+    # print(user.user_class_ids)
+    # print(user.subject_json)
+    # user.save_head()
+    # print(user.get_undo_homework())
+    # print(user.analysis_grade())
