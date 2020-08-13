@@ -38,12 +38,14 @@ def yxpClassId(uid):
     '''
     urlClass = "https://e.anoah.com/api/?q=json/ebag5/User/getUserClasses&info={\"userid\":%s}&pmatsemit=%s"%(uid,yxpTimeGet())
     Class = json.loads(requests.get(urlClass).text)
-    ClassScore = ""
+    ClassScore = []
     for t in Class["recordset"]:
-        ClassScore += str(t['class_id']) + ','
-    # 代码简单化--cjyx9
-    return ClassScore[0:-1]
-####################################################### 
+        ClassScore.append(str(t['class_id']))
+    return ','.join(ClassScore)
+#######################################################
+
+print(yxpClassId('1585738'))
+
 def yxpSubject(uid):
     """获取所有学科"""
     class_id = yxpClassId(uid)
@@ -374,3 +376,4 @@ with open(r"Temp\temp.txt","w+",encoding="UTF-8") as f:
         text=str(text)
         f.write(text)
         print(text)
+
