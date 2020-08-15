@@ -6,7 +6,7 @@ from PIL import Image
 # textWrite=True
 # 写入这一段我改用了相对路径，不会出现问题 -- by cjyx9
 
-is_pydroid = True
+is_pydroid = False
 # 是否为手机运行环境
 
 if(is_pydroid):

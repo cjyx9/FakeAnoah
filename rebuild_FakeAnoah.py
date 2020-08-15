@@ -88,6 +88,36 @@ class User():
             return_list.append(item)
         return return_list
 
+    def get_homeworks(self,subject_type):
+        """
+        获取所有作业
+        subject_type: 单学科名 e.g.语文
+        """
+        if subject_type in self.subject_json:
+            homeworks_api = "http://api2.anoah.com/jwt/homework/publish/getListForStudent?user_id=%s&status=1&subject_id=%s&class_id=%s&from_date=&to_date=&page=1&per_page=-1&pmatsemit=%s" % (self.user_id,self.subject_json[subject_type],self.user_class_ids,self.server_time)
+            homeworks_list = json.loads(requests.get(homeworks_api).text)['recordset']['lists']
+            return_list = []
+            for h in homeworks_list:
+                item = {}
+                item['publish_id'] = h['course_hour_publish_id']
+                item['title'] = h['title']
+                item['teacher_name'] = h['teacher_name']
+                item['start_time'] = h['start_time']
+                item['end_time'] = h['deadline']
+                if h['has_comment'] == 1:
+                    item['comment'] = h['comment']
+                return_list.append(item)
+            return return_list
+        else:
+            print("Error:没有此科目!")
+            return 0
+
+    def get_answer(self):
+        """
+        TODO 就是不准备做
+        """
+        pass
+
 if __name__ == "__main__":
     #* tests *#
     user = User("1765841")
@@ -100,3 +130,4 @@ if __name__ == "__main__":
     # user.save_head()
     # print(user.get_undo_homework())
     # print(user.analysis_grade())
+    # print(user.get_homeworks("语文"))
