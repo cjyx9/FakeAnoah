@@ -116,4 +116,27 @@ class User():
         """
         TODO 就是不准备做
         """
-        pass
+        print("想要答案?可以!50块!👍")
+
+    def get_message(self):
+        """获取信息"""
+        message_api = 'https://www.anoah.com/api/?q=json/ebag/Message/getList&info={"userid":"' + self.user_id + '","page":1,"limit":800}'
+        message_list = json.loads(requests.get(message_api).text)['recordset']['list']
+        return_list = []
+        for message in message_list:
+            item = {}
+            item['title'] = message['title']
+            item['time'] = message['push_time']
+            item['text'] = message['content']
+            item['teacher'] = message['sender']
+            item['id'] = message['message_id']
+            return_list.append(item)
+        return return_list
+
+    def del_message(self, id):
+        """删除信息"""
+        if not isinstance(id, list):
+            id = [id]
+        del_api = 'https://www.anoah.com/api/?q=json/ebag/Message/deleteAll&info={"message_id":' + str(id).replace("'", '"') + ',"user_id":"' + self.user_id + '"}'
+        del_json = requests.get(del_api).text
+        return del_json
