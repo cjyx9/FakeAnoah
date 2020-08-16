@@ -94,7 +94,7 @@ class User():
         subject_type: 单学科名 e.g.语文
         """
         if subject_type in self.subject_json:
-            homeworks_api = "http://api2.anoah.com/jwt/homework/publish/getListForStudent?user_id=%s&status=1&subject_id=%s&class_id=%s&from_date=&to_date=&page=1&per_page=-1&pmatsemit=%s" % (self.user_id,self.subject_json[subject_type],self.user_class_ids,self.server_time)
+            homeworks_api = "http://api2.anoah.com/jwt/homework/publish/getListForStudent?user_id=%s&status=-1&subject_id=%s&class_id=%s&from_date=&to_date=&page=1&per_page=-1&pmatsemit=%s" % (self.user_id,self.subject_json[subject_type],self.user_class_ids,self.server_time)
             homeworks_list = json.loads(requests.get(homeworks_api).text)['recordset']['lists']
             return_list = []
             for h in homeworks_list:
@@ -117,17 +117,3 @@ class User():
         TODO 就是不准备做
         """
         pass
-
-if __name__ == "__main__":
-    #* tests *#
-    user = User("1765841")
-    # print(user.server_time)
-    # print(user.user_name)
-    # print(user.user_head_img)
-    # print(user.uesr_point)
-    # print(user.user_class_ids)
-    # print(user.subject_json)
-    # user.save_head()
-    # print(user.get_undo_homework())
-    # print(user.analysis_grade())
-    # print(user.get_homeworks("语文"))
